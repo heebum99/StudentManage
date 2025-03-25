@@ -103,7 +103,7 @@ public class EmployeeView implements Viewable {
 
         char gender;
         while (true) {
-            System.out.print("성별을 입력해주세요(남/녀) : ");
+            System.out.print("성별을 입력해주세요(남/여) : ");
             gender = sc.nextLine().charAt(0);
             if (gender == '남' || gender == '여') {
                 break;

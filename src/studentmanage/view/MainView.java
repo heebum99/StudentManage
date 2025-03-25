@@ -1,9 +1,9 @@
 package studentmanage.view;
 
 
-import studentmanage.model.vo.Student;
-
 import java.util.Scanner;
+
+import static studentmanage.controller.Controller.getController;
 
 
 //프로그래에서 화면을 출력해주는 역할
@@ -25,6 +25,9 @@ public class MainView {
 
     //1.메뉴 화면 출력
     public void mainMenu() {
+        //영속성을 위해 파일에 저장된 객체 불러서 리스트에 담기
+        getController().loadFile();
+
         //공통 메뉴 출력
         while (true) {
             System.out.println("===== 관리 프로그램 v0.3 =====");
@@ -52,60 +55,12 @@ public class MainView {
                     break;
                 case 0:
                     System.out.println("프로그램을 종료합니다.");
+                    getController().saveFile(); //영속성을 위해 종료 시 각 파일에 각 객체들 저장하기
                     return;
                 default:
                     System.out.println("잘못 선택하셨습니다. 다시 선택하세요!");
                     break;
             }
         }
-    }
-
-    public String inputFindStudentName() {
-        System.out.print("조회할 학생의 이름을 입력해주세요 : ");
-        String name = sc.nextLine();
-
-        return name;
-    }
-
-    public int inputFindStudentGrade() {
-        int grade;
-        while (true) {
-            System.out.print("조회할 학생의 학년을 입력해주세요(1 ~ 3) : ");
-            grade = sc.nextInt();
-            sc.nextLine();
-            if (grade >= 1 && grade <= 3) {
-                break;
-            }
-            System.out.println("1 ~ 3 사이의 수자를 입력해주세요");
-        }
-        return grade;
-    }
-
-
-    public void printStudents(String content) {
-        System.out.println("==== 학생 조회 결과 ====");
-        System.out.println(content);
-        System.out.println("======================");
-    }
-
-    public void printStudentByNo(Student student, int studentNum) {
-        System.out.println("==== " + studentNum + "번 학생 조회 =====");
-        if (student == null) {
-            System.out.println(studentNum + "번인 학생이 없습니다.");
-            return;
-        }
-        System.out.println(student.getInfo());
-    }
-
-    public void printStudentsByGrade(String content, int grade) {
-        System.out.println("==== " + grade + "학년인 학생 조회 결과 ====");
-        System.out.println(content);
-        System.out.println("=========================================");
-    }
-
-    public void printStudentsByName(String content, String name) {
-        System.out.println("==== 이름이 " + name + "인 학생 조회 결과 ====");
-        System.out.println(content);
-        System.out.println("=========================================");
     }
 }

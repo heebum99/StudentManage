@@ -11,6 +11,8 @@ import studentmanage.view.StudentView;
 import studentmanage.view.TeacherView;
 import studentmanage.view.Viewable;
 
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static studentmanage.model.dao.EmployeeDao.employeeDao;
@@ -24,6 +26,10 @@ public class Controller {
     private static Controller controller;
     private DaoInterface dao;
     private Viewable view;
+    private static final String JOB_FILE_NAME = "job.dat";
+    private static final String TEACHER_FILE_NAME = "teacher.dat";
+    private static final String EMPLOYEE_FILE_NAME = "employee.dat";
+
 
     private Controller() {
     }
@@ -255,4 +261,75 @@ public class Controller {
         view.printJob(list, JobValue.EMPLOYEE);
     }
 
+    public void saveFile() {
+        //파일 한 개로 관리하기
+        List<Job> jobList = new ArrayList<>();
+        try (FileOutputStream fos = new FileOutputStream(JOB_FILE_NAME);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            //학생 정보 List에 저장
+            dao = studentDao();
+            List<Student> students = (List<Student>) dao.search(
+                    student -> student != null
+            );
+            if (students != null && students.size() != 0) {
+                jobList.addAll(students);
+            }
+
+            //교사 정보 List에 저장
+            dao = teacherDao();
+            List<Teacher> teachers = (List<Teacher>) dao.search(
+                    teacher -> teacher != null
+            );
+            if (teachers != null && teachers.size() != 0) {
+                jobList.addAll(teachers);
+            }
+
+            //직원 정보 List에 저장
+            dao = employeeDao();
+            List<Employee> employees = (List<Employee>) dao.search(
+                    employee -> employee != null
+            );
+            if (employees != null && employees.size() != 0) {
+                jobList.addAll(employees);
+            }
+
+            oos.writeObject(jobList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadFile() {
+        createFile(JOB_FILE_NAME);
+
+        try (FileInputStream fis = new FileInputStream(JOB_FILE_NAME);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+            List<Job> list = (List<Job>) ois.readObject();
+            for (Job job : list) {
+                if (job instanceof Student) {
+                    dao = studentDao();
+                } else if (job instanceof Teacher) {
+                    dao = teacherDao();
+                } else if (job instanceof Employee) {
+                    dao = employeeDao();
+                }
+                dao.save(job);
+            }
+        } catch (EOFException e) {
+            System.out.println(JOB_FILE_NAME + " 파일 읽기 완료");
+        } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void createFile(String fileName) {
+        File file = new File(fileName);
+        if (!file.exists()) {
+            try {
+                file.createNewFile();
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+    }
 }

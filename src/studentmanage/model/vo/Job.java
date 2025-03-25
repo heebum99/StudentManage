@@ -1,6 +1,8 @@
 package studentmanage.model.vo;
 
-public class Job {
+import java.io.Serializable;
+
+public class Job implements Serializable {
     //식별자, 이름, 나이, 성별, 주소, 연락처, 키, 몸무게
     private int id;
     private static int numIdx = 0;
