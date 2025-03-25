@@ -25,7 +25,7 @@ public class MainView {
 
     //1.메뉴 화면 출력
     public void mainMenu() {
-        //영속성을 위해 파일에 저장된 객체 불러서 리스트에 담기
+        //영속성을 위해 지정된 파일에 저장된 객체 불러서 리스트에 담기
 //        getController().loadFile();
 
         //공통 메뉴 출력
@@ -68,7 +68,7 @@ public class MainView {
                     break;
                 case 0:
                     System.out.println("프로그램을 종료합니다.");
-//                    getController().saveFile(); //영속성을 위해 종료 시 각 파일에 각 객체들 저장하기
+//                    getController().saveFile(); //영속성을 위해 종료 시 지정된 파일에 각 객체들 저장하기
                     return;
                 default:
                     System.out.println("잘못 선택하셨습니다. 다시 선택하세요!");
