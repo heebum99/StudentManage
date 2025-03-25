@@ -15,7 +15,5 @@ public interface DaoInterface {
     boolean update(Job existJob, Job updateJob);
 
     boolean delete(int id);
-
-    Job findById(int id);
 }
 

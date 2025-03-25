@@ -51,11 +51,21 @@ public class StudentDao implements DaoInterface {
 
     @Override
     public boolean delete(int id) {
-        Job job = findById(id);
-        if (job == null) {
+        List<Student> students = search(
+                job -> {
+                    Student student = (Student) job;
+                    return student.getId() == id;
+                }
+        );
+
+        Student student = null;
+        if (students.size() == 1) {
+            student = students.get(0);
+        }
+
+        if (student == null) {
             return false;
         }
-        Student student = (Student) job;
         studentList.remove(student);
         return true;
     }
@@ -75,21 +85,6 @@ public class StudentDao implements DaoInterface {
     @Override
     public boolean findEqualJob(Job studentInfo) {
         return studentList.contains((Student) studentInfo);
-    }
-
-    @Override
-    public Job findById(int id) {
-        List<Student> students = search(
-                job -> {
-                    Student student = (Student) job;
-                    return student.getId() == id;
-                }
-        );
-
-        if (students.size() == 1) {
-            return students.get(0);
-        }
-        return null;
     }
 }
 

@@ -53,33 +53,17 @@ public class TeacherDao implements DaoInterface {
             return false;
         }
 
-        //나중에 추가
         exsistTeacher.setMajor(updateTeacher.getMajor());
         exsistTeacher.setYear(updateTeacher.getYear());
         exsistTeacher.setSalary(updateTeacher.getSalary());
+        exsistTeacher.setAddress(updateTeacher.getAddress());
+        exsistTeacher.setContact(updateTeacher.getContact());
 
         return true;
     }
 
     @Override
     public boolean delete(int id) {
-        Job job = findById(id);
-        if (job == null) {
-            return false;
-        }
-
-        Teacher teacher = (Teacher) job;
-        teacherList.remove(teacher);
-        return true;
-    }
-
-    @Override
-    public boolean findEqualJob(Job teacher) {
-        return teacherList.contains((Teacher) teacher);
-    }
-
-    @Override
-    public Job findById(int id) {
         List<Teacher> teachers = search(
                 job -> {
                     Teacher teacher = (Teacher) job;
@@ -87,9 +71,20 @@ public class TeacherDao implements DaoInterface {
                 }
         );
 
+        Teacher teacher = null;
         if (teachers.size() == 1) {
-            return teachers.get(0);
+            teacher = teachers.get(0);
         }
-        return null;
+
+        if (teacher == null) {
+            return false;
+        }
+        teacherList.remove(teacher);
+        return true;
+    }
+
+    @Override
+    public boolean findEqualJob(Job teacher) {
+        return teacherList.contains((Teacher) teacher);
     }
 }

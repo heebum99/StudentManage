@@ -57,27 +57,14 @@ public class EmployeeDao implements DaoInterface {
         exsistEmployee.setDepartment(updateEmployee.getDepartment());
         exsistEmployee.setRank(updateEmployee.getRank());
         exsistEmployee.setYear(updateEmployee.getYear());
+        exsistEmployee.setContact(updateEmployee.getContact());
+        exsistEmployee.setAddress(updateEmployee.getAddress());
+
         return true;
     }
 
     @Override
     public boolean delete(int id) {
-        Job job = findById(id);
-        if (job == null) {
-            return false;
-        }
-        Employee employee = (Employee) job;
-        employeeList.remove(employee);
-        return true;
-    }
-
-    @Override
-    public boolean findEqualJob(Job employee) {
-        return employeeList.contains((Employee) employee);
-    }
-
-    @Override
-    public Job findById(int id) {
         List<Employee> employees = search(
                 job -> {
                     Employee employee = (Employee) job;
@@ -85,9 +72,20 @@ public class EmployeeDao implements DaoInterface {
                 }
         );
 
+        Employee employee = null;
         if (employees.size() == 1) {
-            return employees.get(0);
+            employee = employees.get(0);
         }
-        return null;
+
+        if (employee == null) {
+            return false;
+        }
+        employeeList.remove(employee);
+        return true;
+    }
+
+    @Override
+    public boolean findEqualJob(Job employee) {
+        return employeeList.contains((Employee) employee);
     }
 }
