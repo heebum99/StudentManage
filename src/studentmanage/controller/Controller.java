@@ -261,7 +261,44 @@ public class Controller {
         view.printJob(list, JobValue.EMPLOYEE);
     }
 
-    public void saveFile() {
+    public void saveFile(String fileName) { //파일 명을 입력받아서 저장
+        List<Job> jobList = new ArrayList<>();
+        try (FileOutputStream fos = new FileOutputStream(fileName);
+             ObjectOutputStream oos = new ObjectOutputStream(fos)) {
+            //학생 정보 List에 저장
+            dao = studentDao();
+            List<Student> students = (List<Student>) dao.search(
+                    student -> student != null
+            );
+            if (students != null && students.size() != 0) {
+                jobList.addAll(students);
+            }
+
+            //교사 정보 List에 저장
+            dao = teacherDao();
+            List<Teacher> teachers = (List<Teacher>) dao.search(
+                    teacher -> teacher != null
+            );
+            if (teachers != null && teachers.size() != 0) {
+                jobList.addAll(teachers);
+            }
+
+            //직원 정보 List에 저장
+            dao = employeeDao();
+            List<Employee> employees = (List<Employee>) dao.search(
+                    employee -> employee != null
+            );
+            if (employees != null && employees.size() != 0) {
+                jobList.addAll(employees);
+            }
+
+            oos.writeObject(jobList);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void saveFile() { //고정된 파일에 저장
         //파일 한 개로 관리하기
         List<Job> jobList = new ArrayList<>();
         try (FileOutputStream fos = new FileOutputStream(JOB_FILE_NAME);
@@ -299,7 +336,30 @@ public class Controller {
         }
     }
 
-    public void loadFile() {
+    public void loadFile(String fileName) { //입력받은 파일명을 불러오기
+        try (FileInputStream fis = new FileInputStream(fileName);
+             ObjectInputStream ois = new ObjectInputStream(fis)) {
+            List<Job> list = (List<Job>) ois.readObject();
+            for (Job job : list) {
+                if (job instanceof Student) {
+                    dao = studentDao();
+                } else if (job instanceof Teacher) {
+                    dao = teacherDao();
+                } else if (job instanceof Employee) {
+                    dao = employeeDao();
+                }
+                dao.save(job);
+            }
+        } catch (EOFException e) {
+            System.out.println(fileName + " 파일 읽기 완료");
+        } catch (ClassNotFoundException e) {
+            System.out.println(fileName + " 파일이 존재하지 않습니다.");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void loadFile() { //고정된 파일을 읽어오기
         createFile(JOB_FILE_NAME);
 
         try (FileInputStream fis = new FileInputStream(JOB_FILE_NAME);
