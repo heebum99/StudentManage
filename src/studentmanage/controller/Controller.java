@@ -339,6 +339,7 @@ public class Controller {
     public void loadFile(String fileName) { //입력받은 파일명을 불러오기
         try (FileInputStream fis = new FileInputStream(fileName);
              ObjectInputStream ois = new ObjectInputStream(fis)) {
+            int index = 0;
             List<Job> list = (List<Job>) ois.readObject();
             for (Job job : list) {
                 if (job instanceof Student) {
@@ -349,7 +350,9 @@ public class Controller {
                     dao = employeeDao();
                 }
                 dao.save(job);
+                index = Math.max(index, job.getId());
             }
+            Job.setNumIdx(index);
         } catch (EOFException e) {
             System.out.println(fileName + " 파일 읽기 완료");
         } catch (ClassNotFoundException e) {
